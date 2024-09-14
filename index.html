@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alnari Catalogo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Estilos para el encabezado */
+        header {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Estilos para la sección de productos relacionados */
+        .container-related-products {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .card-list-products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Espacio entre tarjetas */
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            width: 200px; /* Ancho fijo para las tarjetas */
+            flex: 1 1 200px; /* Flexibilidad para adaptarse */
+            max-width: 200px; /* Ancho máximo */
+        }
+
+        .card-img img {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+
+        .text-product {
+            margin-top: 10px;
+        }
+
+        .category {
+            font-weight: bold;
+        }
+
+        /* Estilo para el botón de WhatsApp */
+        .whatsapp-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25D366; /* Color de WhatsApp */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        /* Estilos para el formulario */
+        .container-info-product {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin: 10px 0;
+        }
+
+        .input-quantity {
+            width: 50px;
+            text-align: center;
+        }
+
+        .total-price {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                width: 90%; /* Más ancho en dispositivos móviles */
+            }
+        }
+
+        /* Estilo para el logo inferior */
+        .footer-logo {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><img src="logoo.png" alt="Logo" style="max-width: 100px;" /></h1>
+        <h1>PERFUMES CON FEROMONAS</h1>
+        <br>
+        <p>Descubre el poder de la atracción</p>
+    </header>
+
+    <main>
+        <div class="container-img">
+            <img src="perfumess.jpg" alt="imagen-producto" style="max-width: 100%;" />
+        </div>
+        <div class="container-info-product">
+            <div class="container-price">
+                <span>CATÁLOGO</span>
+            </div>
+
+            <div class="container-details-product">
+                <div class="form-group">
+                    <label for="preference">PREFERENCIA</label>
+                    <select name="preference" id="preference">
+                        <option disabled selected value="">Escoge una opción</option>
+                        <option value="CABALLERO">CABALLERO</option>
+                        <option value="DAMAS">DAMAS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="size">TAMAÑO</label>
+                    <select name="size" id="size" disabled>
+                        <option disabled selected value="">Escoge una opción</option>
+                        <option value="100ML">100ML</option>
+                        <option value="60ML">60ML</option>
+                        <option value="30ML">30ML</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fragrance">FRAGANCIA</label>
+                    <select name="fragrance" id="fragrance" disabled>
+                        <option disabled selected value="">Escoge una opción</option>
+                    </select>
+                </div>
+                <button class="btn-clean" type="button">Limpiar</button>
+            </div>
+
+            <div class="container-add-cart">
+                <div class="container-quantity">
+                    <input type="number" placeholder="1" value="1" min="1" class="input-quantity" />
+                </div>
+                <button class="btn-add-to-cart">
+                    <i class="fa-solid fa-plus"></i>
+                    Añadir al carrito
+                </button>
+                <button class="btn-ready" style="display:none;">Listo</button>
+                <div class="total-price">
+                    Precio Total: <span id="total-price">0</span> $
+                </div>
+            </div>
+
+            <script>
+                const preferenceSelect = document.getElementById('preference');
+                const sizeSelect = document.getElementById('size');
+                const fragranceSelect = document.getElementById('fragrance');
+                const cleanButton = document.querySelector('.btn-clean');
+                const addToCartButton = document.querySelector('.btn-add-to-cart');
+                const readyButton = document.querySelector('.btn-ready');
+                const quantityInput = document.querySelector('.input-quantity');
+                const totalPriceElement = document.getElementById('total-price');
+            
+                let cart = [];
+                let grandTotal = 0; // Total acumulado
+                const prices = {
+                    '30ML': { detail: 2.5, wholesale: 2.2 },
+                    '60ML': { detail: 4.5, wholesale: 4 },
+                    '100ML': { detail: 7, wholesale: 6 }
+                };
+            
+                const fragrances = {
+                    DAMAS: {
+                        '30ML': ["Lattafa Yara", "Victoria Secret By Angel", "DKNY Be Delicious", "Paco Rabanne Lady Million", "Cristian Dior Jadore", "Fantasy Britney Spears", "Tommy Girl", "Swiss Army", "Can Can", "212 Sexy", "212 VIP"],
+                        '60ML': ["Kim Kardashian", "Lacoste Spar Kling", "Escada Sobertto Roso", "Paris Hilton", "Cloud Pink Ariana Grande", "Escada Miami Blossom", "Katy Perry"],
+                        '100ML': ["Lattafa Yara", "Victoria Secret", "Tommy Girl", "Swiss Army", "Lacoste Spar Kling"]
+                    },
+                    CABALLERO: {
+                        '30ML': ["Paco Rabanne Invictus Victory", "Antonio Banderas King of Seducción", "Antonio Banderas Blue Seducción", "Armari Aqua Di Gio Classic", "Creed Aventus", "Lacoste Noir Negra", "Lacoste RED", "Mancera Black Gold Men", "Paco Rabanne One Million Golden", "Swiss Army"],
+                        '60ML': ["Bestia Negra", "Lattafa Asad Men", "Swiss Army", "Diesel Bad", "Jean Paul Gaultier Ultra", "212 NYC Aqua"],
+                        '100ML': ["Bestia Negra", "Paco Rabanne Invictus Victory", "Swiss Army", "Diesel Bad", "Jean Paul Gaultier Ultra"]
+                    }
+                };
+            
+                preferenceSelect.addEventListener('change', function() {
+                    sizeSelect.disabled = false;
+                    fragranceSelect.disabled = true;
+                    fragranceSelect.innerHTML = '<option disabled selected value="">Escoge una opción</option>'; // Resetear fragancias
+                });
+            
+                sizeSelect.addEventListener('change', function() {
+                    const selectedSize = sizeSelect.value;
+                    const selectedPreference = preferenceSelect.value;
+                    if (selectedPreference && selectedSize) {
+                        const availableFragrances = fragrances[selectedPreference][selectedSize];
+                        fragranceSelect.innerHTML = '<option disabled selected value="">Escoge una opción</option>'; // Resetear fragancias
+                        availableFragrances.forEach(frag => {
+                            const option = document.createElement('option');
+                            option.value = frag;
+                            option.textContent = frag;
+                            fragranceSelect.appendChild(option);
+                        });
+                        fragranceSelect.disabled = false;
+                    }
+                });
+            
+                cleanButton.addEventListener('click', function() {
+                    preferenceSelect.selectedIndex = 0;
+                    sizeSelect.selectedIndex = 0;
+                    fragranceSelect.innerHTML = '<option disabled selected value="">Escoge una opción</option>';
+                    sizeSelect.disabled = true;
+                    fragranceSelect.disabled = true;
+                    quantityInput.value = 1;
+                    totalPriceElement.textContent = '0';
+                    grandTotal = 0; // Reiniciar total acumulado
+                });
+            
+                addToCartButton.addEventListener('click', function() {
+                    const preference = preferenceSelect.value;
+                    const size = sizeSelect.value;
+                    const fragrance = fragranceSelect.value;
+                    const quantity = parseInt(quantityInput.value);
+            
+                    if (preference && size && fragrance) {
+                        let price = quantity >= 12 ? prices[size].wholesale : prices[size].detail;
+                        let total = price * quantity;
+            
+                        // Actualizar el precio total mostrado
+                        grandTotal += total; // Sumar al total acumulado
+                        totalPriceElement.textContent = grandTotal.toFixed(2);
+            
+                        // Agregar producto al carrito
+                        cart.push({ preference, size, fragrance, quantity, price: total });
+                        readyButton.style.display = 'inline-block';
+                        alert(`Producto añadido: ${quantity} ${size} de ${fragrance} (${preference}) - Total: $${total.toFixed(2)}`);
+                    } else {
+                        alert("Por favor, selecciona todas las opciones antes de añadir al carrito.");
+                    }
+                });
+            
+                readyButton.addEventListener('click', function() {
+                    if (cart.length > 0) {
+                        const message = cart.map(item => 
+                            `Producto: ${item.quantity} ${item.size} de ${item.fragrance} (${item.preference}) - Total: $${item.price.toFixed(2)}`
+                        ).join('\n');
+                        
+                        const messageTotal = `Total acumulado: $${grandTotal.toFixed(2)}`;
+                        const whatsappUrl = `https://wa.me/+584242056437?text=${encodeURIComponent(message + '\n' + messageTotal)}`; // Reemplaza con tu número de WhatsApp
+                        window.open(whatsappUrl, '_blank');
+                    } else {
+                        alert("No hay productos en el carrito.");
+                    }
+                });
+            </script>
+            
+            
+
+            <div class="container-description">
+                <div class="title-description">
+                    <h4>Descripción</h4>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="text-description" style="text-align: center;">
+                    <p>Descubre la magia de los perfumes con feromonas, una experiencia sensorial única que va más allá
+                        de un simple aroma. Estos perfumes están formulados con compuestos naturales que evocan la
+                        atracción y la conexión emocional, potenciando tu magnetismo personal. Al usar un perfume con
+                        feromonas, no solo te envuelves en una fragancia cautivadora, sino que también despiertas el interés 
+                        y la curiosidad de quienes te rodean. Perfecto para cualquier ocasión, nuestros perfumes son la clave
+                        para dejar una impresión duradera y atraer a las personas que deseas. ¡Haz que cada momento cuente
+                        con el poder de las feromonas!</p>
+                </div>
+            </div>            
+
+            <div class="container-additional-information">
+                <div class="title-additional-information">
+                    <h4>Información adicional</h4>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="text-additional-information">
+                    <p>PARA MAS FRAGANCIAS. ¡HAS TU PEDIDO!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sección para mostrar 3 productos relacionados -->
+    <section class="container-related-products">
+        <h2>Productos Relacionados</h2>
+        <div class="card-list-products">
+            <div class="card">
+                <div class="card-img">
+                    <img src="100mll.png" alt="producto-1" />
+                </div>
+                <div class="info-card">
+                    <div class="text-product">
+                        <h3>Perfume con feromonas - 100ML</h3>
+                        <p class="category">Al Detal 7$, Al Mayor 6$</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="60mll.png" alt="producto-2" />
+                </div>
+                <div class="info-card">
+                    <div class="text-product">
+                        <h3>Perfume con feromonas - 60ML</h3>
+                        <p class="category">Al Detal 4.5$, Al Mayor 4$</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="30mll.png" alt="producto-3" />
+                </div>
+                <div class="info-card">
+                    <div class="text-product">
+                        <h3>Perfume con feromonas - 30ML</h3>
+                        <p class="category">Al Detal 2.5$, Al Mayor 2.2$</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Botón de WhatsApp -->
+    <a href="https://wa.me/qr/2Z2M35ODP2HBI1" target="_blank">
+        <button class="whatsapp-button">
+            <img src="data:image/png;base64,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" alt="WhatsApp" style="width: 30px; height: 30px;" />
+        </button>
+    </a>
+
+    <!-- Logo inferior -->
+    <div class="footer-logo">
+        <img src="logoo.png" alt="Logo Inferior" style="max-width: 100px;" />
+    </div>
+</body>
+</html>
